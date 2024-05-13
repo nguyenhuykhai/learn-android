@@ -21,7 +21,8 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/txtUser"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:errorEnabled="true">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edtUser"
             android:layout_width="match_parent"
@@ -38,14 +39,16 @@
             android:id="@+id/edtPass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nhập password">
+            android:hint="Nhập password"
+            app:errorEnabled="true">
         </com.google.android.material.textfield.TextInputEditText>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/txtRePass"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:errorEnabled="true">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edtRePass"
             android:layout_width="match_parent"
