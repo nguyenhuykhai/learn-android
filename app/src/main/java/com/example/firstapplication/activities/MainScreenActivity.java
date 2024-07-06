@@ -29,13 +29,14 @@ public class MainScreenActivity extends AppCompatActivity {
     private Button btnAddFood, btnEditFood, btnDeleteFood, btnQueryFood;
 
     private ExecutorService executorService;
+    private List<Food> foodList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
-        // Ánh xạ các view
+        // Initialize views
         edtName = findViewById(R.id.edtName);
         edtDescription = findViewById(R.id.edtDescription);
         edtImage = findViewById(R.id.edtImage);
@@ -52,90 +53,94 @@ public class MainScreenActivity extends AppCompatActivity {
         executorService = Executors.newSingleThreadExecutor();
 
         // Load data on a background thread
+        loadFoodData();
+
+        // Handle add food event
+        btnAddFood.setOnClickListener(v -> addFood());
+
+        // Handle edit food event
+        btnEditFood.setOnClickListener(v -> editFood());
+
+        // Handle delete food event
+        btnDeleteFood.setOnClickListener(v -> deleteFood());
+
+        // Handle query food event
+        btnQueryFood.setOnClickListener(v -> loadFoodData());
+    }
+
+    private void loadFoodData() {
         executorService.execute(() -> {
-            List<Food> foodList = foodDAO.getAll();
-            runOnUiThread(() -> {
-                foodAdapter = new FoodAdapter(foodList);
-                recyclerView.setAdapter(foodAdapter);
-            });
-        });
-
-        // Xử lý sự kiện thêm món ăn
-        btnAddFood.setOnClickListener(v -> {
-            Food food = new Food();
-            food.setName(edtName.getText().toString());
-            food.setDescription(edtDescription.getText().toString());
-            food.setImageUrl(edtImage.getText().toString());
-            food.setPrice(Double.parseDouble(edtPrice.getText().toString()));
-
             try {
-                executorService.execute(() -> {
-                    foodDAO.insert(food);
-                    runOnUiThread(() -> {
-                        foodAdapter.notifyDataSetChanged();
-                        Toast.makeText(MainScreenActivity.this, "Food added", Toast.LENGTH_SHORT).show();
+                foodList = foodDAO.getAll();
+                runOnUiThread(() -> {
+                    foodAdapter = new FoodAdapter(foodList, food -> {
+                        // Handle item click (optional)
                     });
+                    recyclerView.setAdapter(foodAdapter);
+                    foodAdapter.notifyDataSetChanged();
                 });
             } catch (Exception e) {
-                Toast.makeText(this, "Food added failed", Toast.LENGTH_SHORT).show();
+                runOnUiThread(() -> Toast.makeText(MainScreenActivity.this, "Failed to load data", Toast.LENGTH_SHORT).show());
             }
         });
+    }
 
-        // Xử lý sự kiện cập nhật món ăn
-        btnEditFood.setOnClickListener(v -> {
-            Food food = new Food();
-            food.setName(edtName.getText().toString());
-            food.setDescription(edtDescription.getText().toString());
-            food.setImageUrl(edtImage.getText().toString());
-            food.setPrice(Double.parseDouble(edtPrice.getText().toString()));
+    private void addFood() {
+        Food food = new Food();
+        food.setName(edtName.getText().toString());
+        food.setDescription(edtDescription.getText().toString());
+        food.setImageUrl(edtImage.getText().toString());
+        food.setPrice(Double.parseDouble(edtPrice.getText().toString()));
 
+        executorService.execute(() -> {
             try {
-                executorService.execute(() -> {
-                    foodDAO.update(food);
-                    runOnUiThread(() -> {
-                        foodAdapter.notifyDataSetChanged();
-                        Toast.makeText(MainScreenActivity.this, "Food updated", Toast.LENGTH_SHORT).show();
-                    });
+                foodDAO.insert(food);
+                runOnUiThread(() -> {
+                    loadFoodData();
+                    Toast.makeText(MainScreenActivity.this, "Food added", Toast.LENGTH_SHORT).show();
                 });
             } catch (Exception e) {
-                Toast.makeText(this, "Food updated failed", Toast.LENGTH_SHORT).show();
+                runOnUiThread(() -> Toast.makeText(MainScreenActivity.this, "Food addition failed", Toast.LENGTH_SHORT).show());
             }
         });
+    }
 
-        // Xử lý sự kiện xóa món ăn
-        btnDeleteFood.setOnClickListener(v -> {
-            Food food = new Food();
-            food.setName(edtName.getText().toString());
-            food.setDescription(edtDescription.getText().toString());
-            food.setImageUrl(edtImage.getText().toString());
-            food.setPrice(Double.parseDouble(edtPrice.getText().toString()));
+    private void editFood() {
+        Food food = new Food();
+        food.setName(edtName.getText().toString());
+        food.setDescription(edtDescription.getText().toString());
+        food.setImageUrl(edtImage.getText().toString());
+        food.setPrice(Double.parseDouble(edtPrice.getText().toString()));
 
+        executorService.execute(() -> {
             try {
-                executorService.execute(() -> {
-                    foodDAO.delete(food);
-                    runOnUiThread(() -> {
-                        foodAdapter.notifyDataSetChanged();
-                        Toast.makeText(MainScreenActivity.this, "Food deleted", Toast.LENGTH_SHORT).show();
-                    });
+                foodDAO.update(food);
+                runOnUiThread(() -> {
+                    loadFoodData();
+                    Toast.makeText(MainScreenActivity.this, "Food updated", Toast.LENGTH_SHORT).show();
                 });
             } catch (Exception e) {
-                Toast.makeText(this, "Food deleted failed", Toast.LENGTH_SHORT).show();
+                runOnUiThread(() -> Toast.makeText(MainScreenActivity.this, "Food update failed", Toast.LENGTH_SHORT).show());
             }
         });
+    }
 
-        // Xử lý sự kiện lấy danh sách món ăn
-        btnQueryFood.setOnClickListener(v -> {
+    private void deleteFood() {
+        Food food = new Food();
+        food.setName(edtName.getText().toString());
+        food.setDescription(edtDescription.getText().toString());
+        food.setImageUrl(edtImage.getText().toString());
+        food.setPrice(Double.parseDouble(edtPrice.getText().toString()));
+
+        executorService.execute(() -> {
             try {
-                executorService.execute(() -> {
-                    List<Food> foodList = foodDAO.getAll();
-                    runOnUiThread(() -> {
-                        foodAdapter = new FoodAdapter(foodList);
-                        recyclerView.setAdapter(foodAdapter);
-                        foodAdapter.notifyDataSetChanged();
-                    });
+                foodDAO.delete(food);
+                runOnUiThread(() -> {
+                    loadFoodData();
+                    Toast.makeText(MainScreenActivity.this, "Food deleted", Toast.LENGTH_SHORT).show();
                 });
             } catch (Exception e) {
-                Toast.makeText(this, "Query failed", Toast.LENGTH_SHORT).show();
+                runOnUiThread(() -> Toast.makeText(MainScreenActivity.this, "Food deletion failed", Toast.LENGTH_SHORT).show());
             }
         });
     }

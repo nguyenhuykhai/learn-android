@@ -30,6 +30,14 @@ public class Food {
         this.price = price;
     }
 
+    public Food(int id, String name, String description, String imageUrl, double price) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.price = price;
+    }
+
     public int getId() {
         return id;
     }

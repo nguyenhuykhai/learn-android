@@ -18,9 +18,17 @@ import java.util.List;
 public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder> {
 
     private List<Food> foodList;
+    private OnItemClickListener listener;
 
-    public FoodAdapter(List<Food> foodList) {
+    // Define the interface for item click events
+    public interface OnItemClickListener {
+        void onItemClick(Food food);
+    }
+
+    // Pass the listener to the adapter
+    public FoodAdapter(List<Food> foodList, OnItemClickListener listener) {
         this.foodList = foodList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -37,6 +45,14 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
         holder.descriptionTextView.setText(food.getDescription());
         holder.priceTextView.setText(String.valueOf(food.getPrice()));
         Picasso.get().load(food.getImageUrl()).into(holder.imageView);
+
+        // Set the click listener for the item
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(food);
+            }
+        });
     }
 
     @Override
