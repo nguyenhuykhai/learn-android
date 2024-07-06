@@ -68,13 +68,17 @@ public class MainScreenActivity extends AppCompatActivity {
             food.setImageUrl(edtImage.getText().toString());
             food.setPrice(Double.parseDouble(edtPrice.getText().toString()));
 
-            executorService.execute(() -> {
-                foodDAO.insert(food);
-                runOnUiThread(() -> {
-                    foodAdapter.notifyDataSetChanged();
-                    Toast.makeText(MainScreenActivity.this, "Food added", Toast.LENGTH_SHORT).show();
+            try {
+                executorService.execute(() -> {
+                    foodDAO.insert(food);
+                    runOnUiThread(() -> {
+                        foodAdapter.notifyDataSetChanged();
+                        Toast.makeText(MainScreenActivity.this, "Food added", Toast.LENGTH_SHORT).show();
+                    });
                 });
-            });
+            } catch (Exception e) {
+                Toast.makeText(this, "Food added failed", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Xử lý sự kiện cập nhật món ăn
@@ -85,13 +89,17 @@ public class MainScreenActivity extends AppCompatActivity {
             food.setImageUrl(edtImage.getText().toString());
             food.setPrice(Double.parseDouble(edtPrice.getText().toString()));
 
-            executorService.execute(() -> {
-                foodDAO.update(food);
-                runOnUiThread(() -> {
-                    foodAdapter.notifyDataSetChanged();
-                    Toast.makeText(MainScreenActivity.this, "Food updated", Toast.LENGTH_SHORT).show();
+            try {
+                executorService.execute(() -> {
+                    foodDAO.update(food);
+                    runOnUiThread(() -> {
+                        foodAdapter.notifyDataSetChanged();
+                        Toast.makeText(MainScreenActivity.this, "Food updated", Toast.LENGTH_SHORT).show();
+                    });
                 });
-            });
+            } catch (Exception e) {
+                Toast.makeText(this, "Food updated failed", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Xử lý sự kiện xóa món ăn
@@ -102,25 +110,33 @@ public class MainScreenActivity extends AppCompatActivity {
             food.setImageUrl(edtImage.getText().toString());
             food.setPrice(Double.parseDouble(edtPrice.getText().toString()));
 
-            executorService.execute(() -> {
-                foodDAO.delete(food);
-                runOnUiThread(() -> {
-                    foodAdapter.notifyDataSetChanged();
-                    Toast.makeText(MainScreenActivity.this, "Food deleted", Toast.LENGTH_SHORT).show();
+            try {
+                executorService.execute(() -> {
+                    foodDAO.delete(food);
+                    runOnUiThread(() -> {
+                        foodAdapter.notifyDataSetChanged();
+                        Toast.makeText(MainScreenActivity.this, "Food deleted", Toast.LENGTH_SHORT).show();
+                    });
                 });
-            });
+            } catch (Exception e) {
+                Toast.makeText(this, "Food deleted failed", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Xử lý sự kiện lấy danh sách món ăn
         btnQueryFood.setOnClickListener(v -> {
-            executorService.execute(() -> {
-                List<Food> foodList = foodDAO.getAll();
-                runOnUiThread(() -> {
-                    foodAdapter = new FoodAdapter(foodList);
-                    recyclerView.setAdapter(foodAdapter);
-                    foodAdapter.notifyDataSetChanged();
+            try {
+                executorService.execute(() -> {
+                    List<Food> foodList = foodDAO.getAll();
+                    runOnUiThread(() -> {
+                        foodAdapter = new FoodAdapter(foodList);
+                        recyclerView.setAdapter(foodAdapter);
+                        foodAdapter.notifyDataSetChanged();
+                    });
                 });
-            });
+            } catch (Exception e) {
+                Toast.makeText(this, "Query failed", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }
