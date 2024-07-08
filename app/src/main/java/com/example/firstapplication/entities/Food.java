@@ -21,21 +21,29 @@ public class Food {
     @ColumnInfo(name = "price")
     private double price;
 
+    @ColumnInfo(name = "restaurantId")
+    private int restaurantId;
+    private String restaurantName;
+
     public Food() {}
 
-    public Food(String name, String description, String imageUrl, double price) {
-        this.name = name;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.price = price;
-    }
-
-    public Food(int id, String name, String description, String imageUrl, double price) {
+    public Food(int id, String name, String description, String imageUrl, double price, int restaurantId) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.imageUrl = imageUrl;
         this.price = price;
+        this.restaurantId = restaurantId;
+    }
+
+    public Food(int id, String name, String description, String imageUrl, double price, int restaurantId, String restaurantName) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.price = price;
+        this.restaurantId = restaurantId;
+        this.restaurantName = restaurantName;
     }
 
     public int getId() {
@@ -76,5 +84,21 @@ public class Food {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public int getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(int restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
     }
 }

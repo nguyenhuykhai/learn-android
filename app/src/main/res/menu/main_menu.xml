@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/restaurant"
+        android:title="Restaurant"
+        android:showAsAction="always" />
+    <item
+        android:id="@+id/food"
+        android:title="Food"
+        android:showAsAction="always" />
+    <item
         android:id="@+id/logout"
         android:title="Logout"
         android:icon="@android:drawable/ic_lock_power_off"

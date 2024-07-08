@@ -44,6 +44,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
         holder.nameTextView.setText(food.getName());
         holder.descriptionTextView.setText(food.getDescription());
         holder.priceTextView.setText(String.valueOf(food.getPrice()));
+        holder.restaurantNameTextView.setText(food.getRestaurantName());
         Picasso.get().load(food.getImageUrl()).into(holder.imageView);
 
         // Set the click listener for the item
@@ -61,9 +62,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
     }
 
     public static class FoodViewHolder extends RecyclerView.ViewHolder {
-        public TextView nameTextView;
-        public TextView descriptionTextView;
-        public TextView priceTextView;
+        public TextView nameTextView, descriptionTextView, priceTextView, restaurantNameTextView;
         public ImageView imageView;
 
         public FoodViewHolder(@NonNull View itemView) {
@@ -71,6 +70,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
             nameTextView = itemView.findViewById(R.id.food_name);
             descriptionTextView = itemView.findViewById(R.id.food_description);
             priceTextView = itemView.findViewById(R.id.food_price);
+            restaurantNameTextView = itemView.findViewById(R.id.food_restaurant);
             imageView = itemView.findViewById(R.id.food_image);
         }
     }

@@ -2,30 +2,37 @@ package com.example.firstapplication.activities;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.bumptech.glide.Glide;
 import com.example.firstapplication.R;
 import com.example.firstapplication.database.FoodDatabaseHelper;
-import com.example.firstapplication.entities.Food;
+import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity {
 
+    private EditText nameEditText;
+    private EditText descriptionEditText;
+    private EditText priceEditText;
     private ImageView foodImageView;
-    private TextView nameTextView, descriptionTextView, priceTextView;
-    private Button editButton, deleteButton;
+    private EditText restaurantEditText;
+    private EditText addressEditText;
+    private EditText phoneEditText;
+    private Button updateButton;
+    private Button deleteButton;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private Food food;
     private FoodDatabaseHelper dbHelper;
 
     @Override
@@ -33,84 +40,132 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        nameEditText = findViewById(R.id.nameEditText);
+        descriptionEditText = findViewById(R.id.descriptionEditText);
+        priceEditText = findViewById(R.id.priceEditText);
         foodImageView = findViewById(R.id.foodImageView);
-        nameTextView = findViewById(R.id.nameTextView);
-        descriptionTextView = findViewById(R.id.descriptionTextView);
-        priceTextView = findViewById(R.id.priceTextView);
-        editButton = findViewById(R.id.editButton);
+        restaurantEditText = findViewById(R.id.restaurantEditText);
+        addressEditText = findViewById(R.id.addressEditText);
+        phoneEditText = findViewById(R.id.phoneEditText);
+        updateButton = findViewById(R.id.updateButton);
         deleteButton = findViewById(R.id.deleteButton);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
 
         dbHelper = new FoodDatabaseHelper(this);
 
         int foodId = getIntent().getIntExtra("food_id", -1);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadFoodDetails(foodId);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
         loadFoodDetails(foodId);
 
-        editButton.setOnClickListener(new View.OnClickListener() {
+        updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Implement edit logic
-                if (food != null) {
-                    // Example: Navigate to edit screen or show edit UI
-                    // Intent intent = new Intent(DetailActivity.this, EditFoodActivity.class);
-                    // intent.putExtra("food_id", food.getId());
-                    // startActivity(intent);
-                }
+                updateFoodDetails(foodId);
             }
         });
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Implement delete logic
-                if (food != null) {
-                    deleteFood(food.getId());
-                    Toast.makeText(DetailActivity.this, "Food item deleted", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-            }
-        });
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                loadFoodDetails(foodId);
+                deleteFoodDetails(foodId);
             }
         });
     }
 
     private void loadFoodDetails(int foodId) {
-        swipeRefreshLayout.setRefreshing(true);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-
         Cursor cursor = db.query(FoodDatabaseHelper.TABLE_FOOD,
-                null,
-                FoodDatabaseHelper.COLUMN_ID + " = ?",
-                new String[]{String.valueOf(foodId)},
-                null,
-                null,
-                null);
+                null, FoodDatabaseHelper.COLUMN_ID + "=?",
+                new String[]{String.valueOf(foodId)}, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
             String name = cursor.getString(cursor.getColumnIndexOrThrow(FoodDatabaseHelper.COLUMN_NAME));
             String description = cursor.getString(cursor.getColumnIndexOrThrow(FoodDatabaseHelper.COLUMN_DESCRIPTION));
             String imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(FoodDatabaseHelper.COLUMN_IMAGE_URL));
             double price = cursor.getDouble(cursor.getColumnIndexOrThrow(FoodDatabaseHelper.COLUMN_PRICE));
+            int restaurantId = cursor.getInt(cursor.getColumnIndexOrThrow(FoodDatabaseHelper.COLUMN_RESTAURANT_ID));
 
-            food = new Food(foodId, name, description, imageUrl, price);
+            nameEditText.setText(name);
+            descriptionEditText.setText(description);
+            priceEditText.setText(String.format("$%.2f", price));
+            Picasso.get().load(imageUrl).into(foodImageView);
 
-            Glide.with(this).load(food.getImageUrl()).into(foodImageView);
-            nameTextView.setText(food.getName());
-            descriptionTextView.setText(food.getDescription());
-            priceTextView.setText(String.valueOf(food.getPrice()));
+            loadRestaurantDetails(restaurantId);
 
             cursor.close();
         }
-        swipeRefreshLayout.setRefreshing(false);
     }
 
-    private void deleteFood(int foodId) {
+    private void loadRestaurantDetails(int restaurantId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(FoodDatabaseHelper.TABLE_RESTAURANT,
+                null, FoodDatabaseHelper.RESTAURANT_COLUMN_ID + "=?",
+                new String[]{String.valueOf(restaurantId)}, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            String name = cursor.getString(cursor.getColumnIndexOrThrow(FoodDatabaseHelper.RESTAURANT_COLUMN_NAME));
+            String address = cursor.getString(cursor.getColumnIndexOrThrow(FoodDatabaseHelper.RESTAURANT_COLUMN_ADDRESS));
+            String phone = cursor.getString(cursor.getColumnIndexOrThrow(FoodDatabaseHelper.RESTAURANT_COLUMN_PHONE));
+
+            restaurantEditText.setText(name);
+            addressEditText.setText(address);
+            phoneEditText.setText(phone);
+
+            cursor.close();
+        }
+    }
+
+    private void updateFoodDetails(int foodId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.delete(FoodDatabaseHelper.TABLE_FOOD, FoodDatabaseHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(foodId)});
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FoodDatabaseHelper.COLUMN_NAME, nameEditText.getText().toString());
+        contentValues.put(FoodDatabaseHelper.COLUMN_DESCRIPTION, descriptionEditText.getText().toString());
+        contentValues.put(FoodDatabaseHelper.COLUMN_PRICE, Double.parseDouble(priceEditText.getText().toString()));
+        // Assuming the restaurant details are editable and not part of Food table
+        // contentValues.put(FoodDatabaseHelper.COLUMN_RESTAURANT_ID, restaurantId);
+        db.update(FoodDatabaseHelper.TABLE_FOOD, contentValues, FoodDatabaseHelper.COLUMN_ID + "=?", new String[]{String.valueOf(foodId)});
+        loadFoodDetails(foodId);
+    }
+
+    private void deleteFoodDetails(int foodId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(FoodDatabaseHelper.TABLE_FOOD, FoodDatabaseHelper.COLUMN_ID + "=?", new String[]{String.valueOf(foodId)});
+        finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.logout) {
+            SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+            sharedPreferences.edit().putBoolean("authenticated", false).apply();
+            startActivity(new Intent(DetailActivity.this, SignInActivity.class));
+            finish();
+            return true;
+        }
+        if (item.getItemId() == R.id.food) {
+            startActivity(new Intent(DetailActivity.this, MainActivity.class));
+            finish();
+            return true;
+        }
+        if (item.getItemId() == R.id.restaurant) {
+            startActivity(new Intent(DetailActivity.this, RestaurantListActivity.class));
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
