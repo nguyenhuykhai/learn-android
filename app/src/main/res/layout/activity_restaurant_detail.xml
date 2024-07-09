@@ -5,26 +5,61 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/white">
 
-    <TextView
+    <EditText
         android:id="@+id/restaurant_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:hint="Restaurant Name"
+        android:inputType="textPersonName"
         android:textSize="24sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:padding="10dp"
+        android:background="@drawable/edit_text_background"
+        android:layout_marginBottom="16dp"/>
 
-    <TextView
+    <EditText
         android:id="@+id/restaurant_address"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:textSize="18sp" />
+        android:hint="Address"
+        android:inputType="textPostalAddress"
+        android:textSize="18sp"
+        android:padding="10dp"
+        android:background="@drawable/edit_text_background"
+        android:layout_marginBottom="16dp"/>
 
-    <TextView
+    <EditText
         android:id="@+id/restaurant_phone"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp" />
+        android:hint="Phone"
+        android:inputType="phone"
+        android:textSize="18sp"
+        android:padding="10dp"
+        android:background="@drawable/edit_text_background"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/button_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Update"
+        android:padding="10dp"
+        android:textSize="16sp"
+        android:background="@color/design_default_color_primary"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/button_delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:padding="10dp"
+        android:textSize="16sp"
+        android:background="@color/design_default_color_error"
+        android:textColor="@android:color/white"/>
 </LinearLayout>

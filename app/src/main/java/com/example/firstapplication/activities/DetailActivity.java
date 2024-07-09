@@ -206,7 +206,7 @@ public class DetailActivity extends AppCompatActivity {
             int rowsAffected = db.delete(FoodDatabaseHelper.TABLE_FOOD, FoodDatabaseHelper.COLUMN_ID + "=?", new String[]{String.valueOf(foodId)});
             if (rowsAffected > 0) {
                 Toast.makeText(this, "Food details deleted successfully", Toast.LENGTH_SHORT).show();
-                finish();
+                startActivity(new Intent(DetailActivity.this, MainActivity.class));
             } else {
                 Toast.makeText(this, "Delete failed", Toast.LENGTH_SHORT).show();
             }

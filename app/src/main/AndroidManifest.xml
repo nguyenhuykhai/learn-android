@@ -15,6 +15,9 @@
         android:theme="@style/Theme.AppCompat.Light"
         tools:targetApi="31">
         <activity
+            android:name=".activities.AddRestaurantActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.RestaurantDetailActivity"
             android:exported="false" />
         <activity
