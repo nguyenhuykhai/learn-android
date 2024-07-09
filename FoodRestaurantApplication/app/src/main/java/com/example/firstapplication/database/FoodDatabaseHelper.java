@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 public class FoodDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "food";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public static final String TABLE_FOOD = "food";
     public static final String COLUMN_ID = "id";
