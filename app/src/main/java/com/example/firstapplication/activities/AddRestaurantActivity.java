@@ -65,7 +65,7 @@ public class AddRestaurantActivity extends AppCompatActivity {
             long newRowId = db.insert(FoodDatabaseHelper.TABLE_RESTAURANT, null, values);
             if (newRowId != -1) {
                 Toast.makeText(this, "Restaurant added", Toast.LENGTH_SHORT).show();
-                finish();
+                startActivity(new Intent(AddRestaurantActivity.this, RestaurantListActivity.class));
             } else {
                 Toast.makeText(this, "Error adding restaurant", Toast.LENGTH_SHORT).show();
             }
